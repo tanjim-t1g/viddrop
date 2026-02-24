@@ -1,152 +1,56 @@
-# VidDrop — Complete Setup Guide
-### From Zero to Working APK
+# VidDrop Android App (Chaquopy + yt-dlp)
 
----
+This repository now contains a working Android app scaffold with:
 
-## STEP 1 — Create the Android Studio Project
+- Java UI and control layer
+- Chaquopy embedded Python runtime
+- `yt-dlp` installed via Gradle pip configuration
+- Python wrapper API for downloads and safe command execution
+- Share intent support (`ACTION_SEND` / `ACTION_VIEW`)
 
-1. Open **Android Studio**
-2. Click **"New Project"**
-3. Choose **"Empty Views Activity"**
-4. Fill in:
-   - **Name:** VidDrop
-   - **Package name:** com.viddrop
-   - **Language:** Java
-   - **Minimum SDK:** API 26 (Android 8.0)
-5. Click **Finish** and wait for Gradle to sync
+## Project structure
 
----
+- `app/src/main/java/com/viddrop/MainActivity.java` — UI logic, download trigger, command trigger, share-link ingest.
+- `app/src/main/java/com/viddrop/PyBridge.java` — Java-to-Python bridge (Chaquopy).
+- `app/src/main/python/viddrop_bridge.py` — wrapper over `yt_dlp` for `download_video` and `run_command`.
+- `app/src/main/res/layout/activity_main.xml` — two-pane layout matching your sketch.
+- `app/build.gradle` — Chaquopy plugin + pip install (`yt-dlp`).
 
-## STEP 2 — Copy All the Files
+## Build notes
 
-For each file below, find it in Android Studio's left panel (Project view)
-and **replace its contents** by selecting all (Ctrl+A) and pasting:
+1. Open project in Android Studio (Giraffe+ recommended).
+2. Ensure a local Python 3 path exists for `buildPython` in `app/build.gradle`.
+3. Sync Gradle.
+4. Build and run on device.
 
-```
-AndroidManifest.xml
-  → app/src/main/AndroidManifest.xml
+## Supported CMD input in app
 
-activity_main.xml
-  → app/src/main/res/layout/activity_main.xml
+- `version`
+- `extractors`
+- `update` (returns guidance message; update is shipped via new app build)
 
-download_item.xml
-  → app/src/main/res/layout/download_item.xml
+## Important
 
-dialog_terminal.xml
-  → app/src/main/res/layout/dialog_terminal.xml
+Use only in compliance with copyright law and platform terms.
 
-MainActivity.java
-  → app/src/main/java/com/viddrop/MainActivity.java
 
-YtdlpHelper.java
-  → app/src/main/java/com/viddrop/YtdlpHelper.java  (NEW FILE - right click package → New → Java Class)
+## Build fix for `org.gradle.util.VersionNumber`
 
-DownloadService.java
-  → app/src/main/java/com/viddrop/DownloadService.java  (NEW FILE - same as above)
+If Android Studio shows errors like:
 
-colors.xml
-  → app/src/main/res/values/colors.xml
+- `org/gradle/util/VersionNumber`
+- `Unsupported class file major version`
 
-themes.xml
-  → app/src/main/res/values/themes.xml
+this project is now pinned to a compatible toolchain:
 
-build.gradle
-  → app/build.gradle  (replace existing)
+- Android Gradle Plugin: `7.4.2`
+- Chaquopy Gradle plugin: `14.0.2`
+- Java: `17`
 
-All drawable XMLs → app/src/main/res/drawable/
-  (Right click drawable folder → New → Drawable Resource File → paste content)
-```
+`gradle.properties` also pins Gradle to Java 17 via `org.gradle.java.home`.
 
----
+If your local Java path is different, update:
 
-## STEP 3 — Download & Add yt-dlp Binary ⭐ MOST IMPORTANT
+`org.gradle.java.home=/root/.local/share/mise/installs/java/17.0.2`
 
-This is the engine of the whole app.
-
-1. Go to: https://github.com/yt-dlp/yt-dlp/releases/latest
-2. Download the file called: **`yt-dlp_linux_aarch64`**
-   (This is the ARM version that works on Android phones)
-3. **Rename it** to just: `yt-dlp` (no extension)
-4. In Android Studio:
-   - Right click on `app/src/main` folder
-   - Click **New → Folder → Assets Folder**
-   - Click Finish
-5. Now drag the `yt-dlp` file into the **`assets`** folder
-
-Your assets folder should look like:
-```
-app/src/main/assets/
-  └── yt-dlp        ← the binary
-```
-
----
-
-## STEP 4 — Sync & Build
-
-1. Click **File → Sync Project with Gradle Files**
-2. Wait for it to finish (green bar at bottom)
-3. If you see errors, click **Build → Clean Project**, then **Build → Rebuild Project**
-
----
-
-## STEP 5 — Run on Your Phone
-
-1. Enable **Developer Options** on your Android phone:
-   - Settings → About Phone → tap **Build Number** 7 times
-2. Enable **USB Debugging** in Developer Options
-3. Plug your phone into your PC with a USB cable
-4. In Android Studio, select your phone from the dropdown at the top
-5. Click the **green Play ▶ button**
-6. The app will install and open on your phone!
-
----
-
-## STEP 6 — Test Sharing from YouTube
-
-1. Open the YouTube app on your phone
-2. Find any video
-3. Tap **Share → VidDrop**
-4. VidDrop opens with the URL already pasted!
-5. Tap **Download Video**
-
----
-
-## Common Errors & Fixes
-
-| Error | Fix |
-|-------|-----|
-| `AAPT: error: resource not found` | Make sure all drawable XML files are created |
-| `ClassNotFoundException: DownloadService` | Check AndroidManifest.xml has the service tag |
-| `yt-dlp: permission denied` | The binary isn't executable — YtdlpHelper.setup() handles this automatically |
-| `Gradle sync failed` | File → Invalidate Caches → Restart |
-| App crashes on download | Make sure the yt-dlp binary is in assets/ folder |
-
----
-
-## File Structure Overview
-
-```
-VidDrop/
-├── app/
-│   ├── src/main/
-│   │   ├── assets/
-│   │   │   └── yt-dlp              ← binary engine
-│   │   ├── java/com/viddrop/
-│   │   │   ├── MainActivity.java   ← main screen logic
-│   │   │   ├── DownloadService.java ← background downloader
-│   │   │   └── YtdlpHelper.java    ← runs yt-dlp commands
-│   │   ├── res/
-│   │   │   ├── layout/
-│   │   │   │   ├── activity_main.xml    ← main screen UI
-│   │   │   │   ├── download_item.xml    ← each download card
-│   │   │   │   └── dialog_terminal.xml  ← CMD popup
-│   │   │   ├── drawable/            ← all bg_*.xml files
-│   │   │   └── values/
-│   │   │       ├── colors.xml
-│   │   │       └── themes.xml
-│   │   └── AndroidManifest.xml
-│   └── build.gradle
-```
-
----
-
+to your own JDK 17 path.
