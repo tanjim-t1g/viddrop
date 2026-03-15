@@ -30,5 +30,3 @@ This repository now contains a working Android app scaffold with:
 - `update` (returns guidance message; update is shipped via new app build)
 
 ## Important
-
-Use only in compliance with copyright law and platform terms.
