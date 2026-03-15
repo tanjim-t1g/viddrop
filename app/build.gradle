@@ -1,14 +1,4 @@
-apply plugin: 'com.android.application'
-apply plugin: 'com.chaquo.python'
 
-android {
-    namespace 'com.viddrop'
-    compileSdkVersion 33
-
-    defaultConfig {
-        applicationId "com.viddrop"
-        minSdkVersion 26
-        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 

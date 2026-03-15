@@ -30,27 +30,3 @@ This repository now contains a working Android app scaffold with:
 - `update` (returns guidance message; update is shipped via new app build)
 
 ## Important
-
-Use only in compliance with copyright law and platform terms.
-
-
-## Build fix for `org.gradle.util.VersionNumber`
-
-If Android Studio shows errors like:
-
-- `org/gradle/util/VersionNumber`
-- `Unsupported class file major version`
-
-this project is now pinned to a compatible toolchain:
-
-- Android Gradle Plugin: `7.4.2`
-- Chaquopy Gradle plugin: `14.0.2`
-- Java: `17`
-
-`gradle.properties` also pins Gradle to Java 17 via `org.gradle.java.home`.
-
-If your local Java path is different, update:
-
-`org.gradle.java.home=/root/.local/share/mise/installs/java/17.0.2`
-
-to your own JDK 17 path.
